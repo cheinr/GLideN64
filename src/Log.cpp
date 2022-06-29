@@ -59,6 +59,7 @@ void LogDebug(const char* _fileName, int _line, u16 _type, const char* _format, 
 
 	std::unique_lock<std::mutex> lock(g_logMutex);
 
+#if (!EMSCRIPTEN)
 	if (!fileOutput.is_open()) {
 		class SetLocale
 		{
@@ -84,7 +85,7 @@ void LogDebug(const char* _fileName, int _line, u16 _type, const char* _format, 
 
 	if (!fileOutput.is_open())
 		return;
-
+#endif
 	// initialize use of the variable argument array
 	va_list vaArgs;
 	va_start(vaArgs, _format);
@@ -109,8 +110,13 @@ void LogDebug(const char* _fileName, int _line, u16 _type, const char* _format, 
 	std::time_t t = std::time(nullptr);
 	std::wstringstream lcFormatString;
 	lcFormatString << formattedTimeOfLog << "," << _fileName << ":" << _line << "," << logLevelText[_type] << ", \"" << zc.data() << "\"" << std::endl;
+
+#if EMSCRIPTEN
+        std::wcout << lcFormatString.str();
+#else
 	fileOutput << lcFormatString.str();
 	fileOutput.flush();
+#endif
 }
 
 #if defined(OS_WINDOWS) && !defined(MINGW)

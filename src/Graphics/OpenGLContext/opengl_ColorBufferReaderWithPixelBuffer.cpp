@@ -62,8 +62,13 @@ const u8 * ColorBufferReaderWithPixelBuffer::_readPixels(const ReadColorBufferPa
 	_heightOffset = 0;
 	_stride = m_pTexture->width;
 
-	return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
+#if (!EMSCRIPTEN)
+        return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
 		m_pTexture->width * _params.height * _params.colorFormatBytes, GL_MAP_READ_BIT));
+#else
+	return reinterpret_cast<u8*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0,
+		m_pTexture->width * _params.height * _params.colorFormatBytes, 0xA));
+#endif
 }
 
 void ColorBufferReaderWithPixelBuffer::cleanUp()

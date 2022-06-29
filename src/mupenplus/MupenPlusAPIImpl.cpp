@@ -4,6 +4,8 @@
 #include "../Config.h"
 #include <DisplayWindow.h>
 
+#if (!M64P_STATIC_PLUGINS)
+
 #ifdef OS_WINDOWS
 #define DLSYM(a, b) GetProcAddress(a, b)
 #else
@@ -11,6 +13,10 @@
 #define DLSYM(a, b) dlsym(a, b)
 #endif // OS_WINDOWS
 
+#endif // !M64P_STATIC_PLUGINS
+
+
+#if (!M64P_STATIC_PLUGINS)
 ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath = nullptr;
 ptr_ConfigGetUserConfigPath ConfigGetUserConfigPath = nullptr;
 ptr_ConfigGetUserDataPath ConfigGetUserDataPath = nullptr;
@@ -31,6 +37,7 @@ ptr_ConfigExternalGetParameter ConfigExternalGetParameter = nullptr;
 ptr_ConfigExternalOpen ConfigExternalOpen = nullptr;
 ptr_ConfigExternalClose ConfigExternalClose = nullptr;
 
+
 /* definitions of pointers to Core video extension functions */
 ptr_VidExt_Init                  CoreVideo_Init = nullptr;
 ptr_VidExt_Quit                  CoreVideo_Quit = nullptr;
@@ -47,7 +54,26 @@ ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = nullptr;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = nullptr;
 ptr_VidExt_GL_GetDefaultFramebuffer CoreVideo_GL_GetDefaultFramebuffer = nullptr;
 
-ptr_PluginGetVersion             CoreGetVersion = nullptr;
+#else
+
+ptr_VidExt_Init                  CoreVideo_Init = &VidExt_Init;
+ptr_VidExt_Quit                  CoreVideo_Quit = &VidExt_Quit;
+ptr_VidExt_ListFullscreenModes   CoreVideo_ListFullscreenModes = &VidExt_ListFullscreenModes;
+ptr_VidExt_ListFullscreenRates   CoreVideo_ListFullscreenRates = &VidExt_ListFullscreenRates;
+ptr_VidExt_SetVideoMode          CoreVideo_SetVideoMode = &VidExt_SetVideoMode;
+ptr_VidExt_SetVideoModeWithRate  CoreVideo_SetVideoModeWithRate = &VidExt_SetVideoModeWithRate;
+ptr_VidExt_SetCaption            CoreVideo_SetCaption = &VidExt_SetCaption;
+ptr_VidExt_ToggleFullScreen      CoreVideo_ToggleFullScreen = &VidExt_ToggleFullScreen;
+ptr_VidExt_ResizeWindow          CoreVideo_ResizeWindow = &VidExt_ResizeWindow;
+ptr_VidExt_GL_GetProcAddress     CoreVideo_GL_GetProcAddress = &VidExt_GL_GetProcAddress;
+ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = &VidExt_GL_SetAttribute;
+ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = &VidExt_GL_GetAttribute;
+ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = &VidExt_GL_SwapBuffers;
+ptr_VidExt_GL_GetDefaultFramebuffer CoreVideo_GL_GetDefaultFramebuffer = &VidExt_GL_GetDefaultFramebuffer;
+
+ptr_PluginGetVersion             CoreGetVersion = &CorePluginGetVersion;
+#endif
+
 
 const unsigned int* rdram_size = nullptr;
 
@@ -55,7 +81,9 @@ void(*renderCallback)(int) = nullptr;
 
 m64p_error PluginAPI::PluginStartup(m64p_dynlib_handle _CoreLibHandle)
 {
-	ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)	DLSYM(_CoreLibHandle, "ConfigGetSharedDataFilepath");
+
+#if (!M64P_STATIC_PLUGINS)
+        ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)	DLSYM(_CoreLibHandle, "ConfigGetSharedDataFilepath");
 	ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath)	DLSYM(_CoreLibHandle, "ConfigGetUserConfigPath");
 	ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath)DLSYM(_CoreLibHandle, "ConfigGetUserCachePath");
 	ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath)DLSYM(_CoreLibHandle, "ConfigGetUserDataPath");
@@ -93,6 +121,7 @@ m64p_error PluginAPI::PluginStartup(m64p_dynlib_handle _CoreLibHandle)
 	CoreVideo_GL_GetDefaultFramebuffer = (ptr_VidExt_GL_GetDefaultFramebuffer) DLSYM(_CoreLibHandle, "VidExt_GL_GetDefaultFramebuffer");
 
 	CoreGetVersion = (ptr_PluginGetVersion) DLSYM(_CoreLibHandle, "PluginGetVersion");
+#endif
 
 #ifndef M64P_GLIDENUI
 	if (Config_SetDefault()) {

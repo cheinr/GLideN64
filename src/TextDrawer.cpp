@@ -201,7 +201,10 @@ struct Atlas {
 static
 bool getFontFileName(char * _strName)
 {
-#ifdef OS_WINDOWS
+
+#if EMSCRIPTEN
+  	sprintf(_strName, "/data/font.ttf");
+#elif OS_WINDOWS
 	char * pSysPath = getenv("WINDIR");
 	if (pSysPath == nullptr)
 		return false;

@@ -40,8 +40,14 @@ extern "C" {
  */
 typedef m64p_error (*ptr_PluginGetVersion)(m64p_plugin_type *, int *, int *, const char **, int *);
 #if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
+
+#if M64P_STATIC_PLUGINS
+EXPORT m64p_error CALL CorePluginGetVersion(m64p_plugin_type *, int *, int *, const char **, int *);
+#else
 EXPORT m64p_error CALL PluginGetVersion(m64p_plugin_type *, int *, int *, const char **, int *);
 #endif
+#endif
+
 
 /* CoreGetAPIVersions()
  *
@@ -69,7 +75,11 @@ EXPORT const char * CALL CoreErrorMessage(m64p_error);
 */
 typedef m64p_error (*ptr_PluginStartup)(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
 #if defined(M64P_PLUGIN_PROTOTYPES) || defined(M64P_CORE_PROTOTYPES)
+#if M64P_STATIC_PLUGINS
+EXPORT m64p_error CALL PluginStartupVideo(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
+#else
 EXPORT m64p_error CALL PluginStartup(m64p_dynlib_handle, void *, void (*)(void *, int, const char *));
+#endif
 #endif
 
 /* PluginShutdown()

@@ -5028,7 +5028,7 @@ class CoreVideoInitCommand : public OpenGlCommand
 {
 public:
 	CoreVideoInitCommand() :
-		OpenGlCommand(true, false, "CoreVideo_Init", false)
+          OpenGlCommand(true, false, "CoreVideo_Init", false)
 	{
 	}
 
@@ -5057,7 +5057,7 @@ class CoreVideoQuitCommand : public OpenGlCommand
 {
 public:
 	CoreVideoQuitCommand() :
-		OpenGlCommand(true, false, "CoreVideo_Quit", false)
+          OpenGlCommand(true, false, "CoreVideo_Quit", false)
 	{
 	}
 
@@ -5084,7 +5084,9 @@ class CoreVideoSetVideoModeCommand : public OpenGlCommand
 {
 public:
 	CoreVideoSetVideoModeCommand() :
-		OpenGlCommand(true, false, "CoreVideo_SetVideoMode", false)
+          OpenGlCommand(true, false, "CoreVideo_SetVideoMode", false)
+
+
 	{
 	}
 
@@ -5128,7 +5130,7 @@ class CoreVideoSetVideoModeWithRateCommand : public OpenGlCommand
 {
 public:
 	CoreVideoSetVideoModeWithRateCommand() :
-		OpenGlCommand(true, false, "CoreVideo_SetVideoModeWithRate", false)
+          OpenGlCommand(true, false, "CoreVideo_SetVideoModeWithRate", false)
 	{
 	}
 
@@ -5174,7 +5176,8 @@ class CoreVideoGLSetAttributeCommand : public OpenGlCommand
 {
 public:
 	CoreVideoGLSetAttributeCommand() :
-		OpenGlCommand(true, false, "CoreVideo_GL_SetAttribute", false)
+          OpenGlCommand(true, false, "CoreVideo_GL_SetAttribute", false)
+
 	{
 	}
 
@@ -5206,7 +5209,7 @@ class CoreVideoGLGetAttributeCommand : public OpenGlCommand
 {
 public:
 	CoreVideoGLGetAttributeCommand() :
-		OpenGlCommand(true, false, "CoreVideo_GL_GetAttribute", false)
+          OpenGlCommand(true, false, "CoreVideo_GL_GetAttribute", false)
 	{
 	}
 
@@ -5238,7 +5241,7 @@ class CoreVideoGLSwapBuffersCommand : public OpenGlCommand
 {
 public:
 	CoreVideoGLSwapBuffersCommand() :
-		OpenGlCommand(false, false, "CoreVideo_GL_SwapBuffers", false)
+          OpenGlCommand(false, false, "CoreVideo_GL_SwapBuffers", false)
 	{
 	}
 

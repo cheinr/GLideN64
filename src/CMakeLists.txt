@@ -10,6 +10,18 @@ option(VERO4K "Set to ON if targeting a Vero4k" ${VERO4K})
 option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
 option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
 
+option(EMSCRIPTEN "Compile with emscripten")
+option(M64P_STATIC_PLUGINS "Use static plugin api naming and avoid dynamic calls")
+
+if(M64P_STATIC_PLUGINS)
+    add_compile_definitions(M64P_STATIC_PLUGINS=1)
+else()
+    add_compile_definitions(M64P_STATIC_PLUGINS=0)
+endif()
+
+add_compile_options("-s" "USE_FREETYPE=1")     
+
+
 # run script to generate Revision.h
 set(PATH_REVISION "${CMAKE_CURRENT_BINARY_DIR}/inc/Revision.h")
 find_package(Git)
@@ -34,6 +46,11 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/inc")
 project( GLideN64 )
 
 include(GNUInstallDirs)
+
+file(GLOB OSAL_SOURCES "osal/*.c")
+list(FILTER OSAL_SOURCES EXCLUDE REGEX ".*win32\\.c$")
+list(FILTER OSAL_SOURCES EXCLUDE REGEX ".*win\\.c$")
+list(FILTER OSAL_SOURCES EXCLUDE REGEX ".*linux\\.c$")
 
 set(GLideN64_SOURCES
   3DMath.cpp
@@ -250,6 +267,7 @@ if(MUPENPLUSAPI)
       set(GLideN64_DLL_NAME libmupen64plus-video-GLideN64)
   else()
       set(GLideN64_DLL_NAME mupen64plus-video-GLideN64)
+      set(GLideN64_DLL_NAME_STATIC mupen64plus-video-GLideN64-web)
   endif()
 else(MUPENPLUSAPI)
   if(UNIX)
@@ -414,7 +432,11 @@ if(ANDROID)
             ${ANDROID_LIB_PATH}/libs/${BUILD_VARIANT}/${ANDROID_ABI}/libfreetype.so)
     set(FREETYPE_LIBRARIES ANDROID_FREETYPE)
 else(ANDROID)
-    FIND_PACKAGE( Freetype REQUIRED )
+
+    if (NOT EMSCRIPTEN)
+        FIND_PACKAGE( Freetype REQUIRED )
+    endif()
+
     # presume a qt build linked to freetype
     # will be used with mingw
     if (NOT MUPENPLUSAPI AND MINGW)
@@ -505,7 +527,7 @@ else(EGL)
   endif(NOT OPENGL_FOUND)
 endif(EGL)
 
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if(NOT EMSCRIPTEN AND ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang"))
   #check for compiler version
   execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion OUTPUT_VARIABLE G++_VERSION)
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" AND G++_VERSION VERSION_LESS 4.8)
@@ -526,7 +548,12 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 
-add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES} ${PATH_REVISION})
+
+add_library( ${GLideN64_DLL_NAME} SHARED ${GLideN64_SOURCES} ${PATH_REVISION})        
+
+if(M64P_STATIC_PLUGINS)
+  add_library( ${GLideN64_DLL_NAME_STATIC} STATIC ${GLideN64_SOURCES} ${PATH_REVISION} ${OSAL_SOURCES})
+endif()
 
 set_target_properties(
 	${GLideN64_DLL_NAME}

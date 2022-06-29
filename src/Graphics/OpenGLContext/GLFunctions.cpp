@@ -2,7 +2,13 @@
 
 #define ASSIGN_PROC_ADR(proc_type, proc_name) ptr##proc_name = gl##proc_name
 
-#ifdef OS_WINDOWS
+#ifdef EMSCRIPTEN
+
+#include <SDL.h>
+#define glGetProcAddress SDL_GL_GetProcAddress
+#define GL_GET_PROC_ADR(proc_type, proc_name) ptr##proc_name = (proc_type) glGetProcAddress("gl"#proc_name)
+
+#elif defined(OS_WINDOWS)
 
 #define glGetProcAddress wglGetProcAddress
 #define GL_GET_PROC_ADR(proc_type, proc_name) ptr##proc_name = (proc_type) glGetProcAddress("gl"#proc_name)

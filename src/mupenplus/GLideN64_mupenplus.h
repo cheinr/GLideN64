@@ -1,6 +1,10 @@
 #ifndef GLIDEN64_MUPENPLUS_H
 #define GLIDEN64_MUPENPLUS_H
 
+#ifdef M64P_STATIC_PLUGINS
+#define M64P_CORE_PROTOTYPES 1
+#endif
+
 #include "m64p_common.h"
 #include "m64p_config.h"
 #include "m64p_vidext.h"
@@ -10,6 +14,7 @@
 #define CONFIG_API_VERSION          0x020000
 #define VIDEXT_API_VERSION          0x030000
 
+#if (!M64P_STATIC_PLUGINS)
 /* definitions of pointers to Core config functions */
 extern ptr_ConfigOpenSection      ConfigOpenSection;
 extern ptr_ConfigDeleteSection    ConfigDeleteSection;
@@ -34,7 +39,7 @@ extern ptr_ConfigGetSharedDataFilepath ConfigGetSharedDataFilepath;
 extern ptr_ConfigGetUserConfigPath     ConfigGetUserConfigPath;
 extern ptr_ConfigGetUserDataPath       ConfigGetUserDataPath;
 extern ptr_ConfigGetUserCachePath      ConfigGetUserCachePath;
-
+#endif
 
 extern ptr_VidExt_Init                  CoreVideo_Init;
 extern ptr_VidExt_Quit                  CoreVideo_Quit;

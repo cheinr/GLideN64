@@ -5,7 +5,13 @@
 
 extern "C" {
 
-EXPORT int CALL RomOpen(void)
+EXPORT int CALL
+#if (!M64P_STATIC_PLUGINS)
+RomOpen
+#else
+RomOpenVideo
+#endif
+(void)
 {
 	if (rdram_size != nullptr)
 		RDRAMSize = *rdram_size - 1;
@@ -15,8 +21,13 @@ EXPORT int CALL RomOpen(void)
 	return api().RomOpen();
 }
 
-EXPORT m64p_error CALL PluginGetVersion(
-	m64p_plugin_type * _PluginType,
+EXPORT m64p_error CALL
+#if (!M64P_STATIC_PLUGINS)
+PluginGetVersion
+#else
+PluginGetVersionVideo
+#endif
+(m64p_plugin_type * _PluginType,
 	int * _PluginVersion,
 	int * _APIVersion,
 	const char ** _PluginNamePtr,
@@ -26,8 +37,13 @@ EXPORT m64p_error CALL PluginGetVersion(
 	return api().PluginGetVersion(_PluginType, _PluginVersion, _APIVersion, _PluginNamePtr, _Capabilities);
 }
 
-EXPORT m64p_error CALL PluginStartup(
-	m64p_dynlib_handle CoreLibHandle,
+EXPORT m64p_error CALL
+#if (!M64P_STATIC_PLUGINS)
+PluginStartup
+#else
+PluginStartupVideo
+#endif
+(m64p_dynlib_handle CoreLibHandle,
 	void *Context,
 	void (*DebugCallback)(void *, int, const char *)
 )
@@ -42,7 +58,13 @@ EXPORT m64p_error CALL PluginConfig(void)
 }
 #endif // M64P_GLIDENUI
 
-EXPORT m64p_error CALL PluginShutdown(void)
+EXPORT m64p_error CALL
+#if (!M64P_STATIC_PLUGINS)
+PluginShutdown
+#else
+PluginShutdownVideo
+#endif
+(void)
 {
 	return api().PluginShutdown();
 }
