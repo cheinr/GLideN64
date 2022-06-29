@@ -84,6 +84,7 @@ void (*renderCallback)(int) = nullptr;
 
 m64p_error PluginAPI::PluginStartup(m64p_dynlib_handle _CoreLibHandle, void* Context, void (*DebugCallback)(void *, int, const char *))
 {
+
 	CoreDebugCallbackContext = Context;
 	CoreDebugCallback = DebugCallback;
 
