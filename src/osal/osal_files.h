@@ -46,6 +46,10 @@ extern "C" {
 #endif
 #endif
 
+#if (M64P_STATIC_PLUGINS)
+#define osal_mkdirp osal_core_mkdirp
+#endif
+
 // Returns 1 if name contains path to a directory, 0 otherwise
 EXPORT int CALL osal_is_directory(const wchar_t* name);
 // Returns 1 if name contains an absolute path, 0 otherwise. Path validity not tested.
