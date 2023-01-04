@@ -10,6 +10,7 @@ option(MESA "Set to ON to disable Raspberry Pi autodetection" ${MESA})
 option(VERO4K "Set to ON if targeting a Vero4k" ${VERO4K})
 option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
 option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
+option(DEBUG_DUMP "Set to ON to enable debug dump" ${DEBUG_DUMP})
 
 option(EMSCRIPTEN "Compile with emscripten")
 option(M64P_STATIC_PLUGINS "Use static plugin api naming and avoid dynamic calls")
@@ -220,6 +221,12 @@ if( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
 		-DGL_DEBUG
 	)
 endif( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
+
+if (DEBUG_DUMP)
+  add_definitions(
+    -DDEBUG_DUMP
+  )
+endif(DEBUG_DUMP)
 
 #check if we're running on Raspberry Pi
 if(EXISTS "${CMAKE_FIND_ROOT_PATH}/opt/vc/include/bcm_host.h" AND NOT MESA)
