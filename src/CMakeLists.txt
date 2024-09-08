@@ -13,13 +13,16 @@ option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
 option(EMSCRIPTEN "Compile with emscripten")
 option(M64P_STATIC_PLUGINS "Use static plugin api naming and avoid dynamic calls")
 
+if(EMSCRIPTEN)
+  add_compile_options(-sUSE_SDL=2)
+  add_compile_options(-sUSE_FREETYPE=1)
+endif()
 if(M64P_STATIC_PLUGINS)
     add_compile_definitions(M64P_STATIC_PLUGINS=1)
 else()
     add_compile_definitions(M64P_STATIC_PLUGINS=0)
 endif()
 
-add_compile_options("-s" "USE_FREETYPE=1")     
 
 
 # run script to generate Revision.h

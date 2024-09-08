@@ -4,7 +4,7 @@
 
 #ifdef EMSCRIPTEN
 
-#include <SDL.h>
+#include <SDL_video.h>
 #define glGetProcAddress SDL_GL_GetProcAddress
 #define GL_GET_PROC_ADR(proc_type, proc_name) ptr##proc_name = (proc_type) glGetProcAddress("gl"#proc_name)
 
