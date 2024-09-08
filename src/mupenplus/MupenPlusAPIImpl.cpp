@@ -75,15 +75,20 @@ ptr_PluginGetVersion             CoreGetVersion = &CorePluginGetVersion;
 #endif
 
 
+void*                            CoreDebugCallbackContext = nullptr;
+ptr_DebugCallback                CoreDebugCallback        = nullptr;
+
 const unsigned int* rdram_size = nullptr;
 
-void(*renderCallback)(int) = nullptr;
+void (*renderCallback)(int) = nullptr;
 
-m64p_error PluginAPI::PluginStartup(m64p_dynlib_handle _CoreLibHandle)
+m64p_error PluginAPI::PluginStartup(m64p_dynlib_handle _CoreLibHandle, void* Context, void (*DebugCallback)(void *, int, const char *))
 {
+	CoreDebugCallbackContext = Context;
+	CoreDebugCallback = DebugCallback;
 
 #if (!M64P_STATIC_PLUGINS)
-        ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)	DLSYM(_CoreLibHandle, "ConfigGetSharedDataFilepath");
+	ConfigGetSharedDataFilepath = (ptr_ConfigGetSharedDataFilepath)	DLSYM(_CoreLibHandle, "ConfigGetSharedDataFilepath");
 	ConfigGetUserConfigPath = (ptr_ConfigGetUserConfigPath)	DLSYM(_CoreLibHandle, "ConfigGetUserConfigPath");
 	ConfigGetUserCachePath = (ptr_ConfigGetUserCachePath)DLSYM(_CoreLibHandle, "ConfigGetUserCachePath");
 	ConfigGetUserDataPath = (ptr_ConfigGetUserDataPath)DLSYM(_CoreLibHandle, "ConfigGetUserDataPath");

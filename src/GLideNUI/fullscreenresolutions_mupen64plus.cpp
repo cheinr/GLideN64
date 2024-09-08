@@ -76,7 +76,10 @@ void fillFullscreenResolutionsList(QStringList &_listResolutions, int &_resoluti
 	ret = CoreVideo_ListFullscreenModes(resolutions, &resolutions_length);
 
 	if (ret != M64ERR_SUCCESS)
+	{
+		free(resolutions);
 		return;
+	}
 
 	for (int i = 0; i < resolutions_length; i++)
 	{
@@ -114,4 +117,9 @@ void getFullscreenResolutions(int _idx, unsigned int &_width, unsigned int &_hei
 void getFullscreenRefreshRate(int _idx, unsigned int &_rate)
 {
 	_rate = fullscreen.refreshRate[_idx];
+}
+
+std::vector<DisplayInfo> getDisplayInfo()
+{
+	return {};
 }

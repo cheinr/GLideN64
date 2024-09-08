@@ -441,7 +441,7 @@ bool CheckForFrameBufferTexture(u32 _address, u32 _width, u32 _bytes)
 		break;
 	}
 
-	for (u32 nTile = gSP.texture.tile; nTile < 6; ++nTile) {
+	for (u32 nTile = 0; nTile < 6; ++nTile) {
 		if (gDP.tiles[nTile].tmem == gDP.loadTile->tmem) {
 			gDPTile & curTile = gDP.tiles[nTile];
 			curTile.textureMode = gDP.loadTile->textureMode;
@@ -489,8 +489,13 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 	gDP.loadTile->loadType = LOADTYPE_TILE;
 	gDP.loadTile->imageAddress = gDP.textureImage.address;
 
-	if (gDP.loadTile->lrs < gDP.loadTile->uls || gDP.loadTile->lrt < gDP.loadTile->ult)
+	DebugMsg(DEBUG_NORMAL, "gDPLoadTile( %i, %i, %i, %i, %i );\n",
+		tile, gDP.loadTile->uls, gDP.loadTile->ult, gDP.loadTile->lrs, gDP.loadTile->lrt);
+
+	if (gDP.loadTile->lrs < gDP.loadTile->uls || gDP.loadTile->lrt < gDP.loadTile->ult) {
+		DebugMsg(DEBUG_ERROR, "gDPLoadTile is skipped because of wrong tile sizes.\n");
 		return;
+	}
 
 	const u32 width = (gDP.loadTile->lrs - gDP.loadTile->uls + 1) & 0x03FF;
 	const u32 height = (gDP.loadTile->lrt - gDP.loadTile->ult + 1) & 0x03FF;
@@ -529,8 +534,10 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 		// 32 bit texture loaded into lower and upper half of TMEM, thus actual bytes doubled.
 		info.bytes *= 2;
 
-	if (gDP.loadTile->line == 0)
+	if (gDP.loadTile->line == 0) {
+		DebugMsg(DEBUG_ERROR, "gDPLoadTile is skipped because tile line is zero.\n");
 		return;
+	}
 
 	if (gDP.loadTile->masks == 0)
 		gDP.loadTile->loadWidth = max(gDP.loadTile->loadWidth, info.width);
@@ -553,13 +560,18 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 	if (CheckForFrameBufferTexture(address, info.width, bpl2*height2))
 		return;
 
+	if (address >= RDRAMSize) {
+		DebugMsg(DEBUG_ERROR, "gDPLoadTile is skipped because load address is greater than RDRAM size.\n");
+		return;
+	}
+
 	if (gDP.loadTile->size == G_IM_SIZ_32b)
 		gDPLoadTile32b(gDP.loadTile->uls, gDP.loadTile->ult, gDP.loadTile->lrs, gDP.loadTile->lrt);
 	else {
 		u32 tmemAddr = gDP.loadTile->tmem;
 		const u32 line = gDP.loadTile->line;
 		const u32 qwpr = bpr >> 3;
-		for (u32 y = 0; y < height; ++y) {
+		for (u32 y = 0; y < height && address < RDRAMSize; ++y) {
 			if (address + bpl > RDRAMSize)
 				UnswapCopyWrap(RDRAM, address, reinterpret_cast<u8*>(TMEM), tmemAddr << 3, 0xFFF, RDRAMSize - address);
 			else
@@ -568,14 +580,9 @@ void gDPLoadTile(u32 tile, u32 uls, u32 ult, u32 lrs, u32 lrt)
 				DWordInterleaveWrap(reinterpret_cast<u32*>(TMEM), tmemAddr << 1, 0x3FF, qwpr);
 
 			address += gDP.textureImage.bpl;
-			if (address >= RDRAMSize)
-				break;
 			tmemAddr += line;
 		}
 	}
-
-	DebugMsg( DEBUG_NORMAL, "gDPLoadTile( %i, %i, %i, %i, %i );\n",
-			tile, gDP.loadTile->uls, gDP.loadTile->ult, gDP.loadTile->lrs, gDP.loadTile->lrt );
 }
 
 //****************************************************************
@@ -907,16 +914,16 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, s16 s, s1
 	gDP.lastTexRectInfo.dsdx = !flip ? dsdx : dtdy;
 	gDP.lastTexRectInfo.dtdy = !flip ? dtdy : dsdx;
 
-	f32 S = _FIXED2FLOAT(!flip ? s : t, 5);
-	f32 T = _FIXED2FLOAT(!flip ? t : s, 5);
-	f32 DSDX = !flip ? dsdx : dtdy;
-	f32 DTDY = !flip ? dtdy : dsdx;
-	f32 uls = S + (ceilf(ulx) - ulx) * DSDX;
-	f32 lrs = S + (ceilf(lrx) - ulx - 1.0f) * DSDX;
-	f32 ult = T + (ceilf(uly) - uly) * DTDY;
-	f32 lrt = T + (ceilf(lry) - uly - 1.0f) * DTDY;
-
 	if (config.graphics2D.enableTexCoordBounds != 0) {
+		f32 S = _FIXED2FLOAT(!flip ? s : t, 5);
+		f32 T = _FIXED2FLOAT(!flip ? t : s, 5);
+		f32 DSDX = !flip ? dsdx : dtdy;
+		f32 DTDY = !flip ? dtdy : dsdx;
+		f32 uls = S + (ceilf(ulx) - ulx) * DSDX;
+		f32 lrs = S + (ceilf(lrx) - ulx - 1.0f) * DSDX;
+		f32 ult = T + (ceilf(uly) - uly) * DTDY;
+		f32 lrt = T + (ceilf(lry) - uly - 1.0f) * DTDY;
+
 		gDP.m_texCoordBounds.valid = true;
 		gDP.m_texCoordBounds.uls = fmin(uls, lrs);
 		gDP.m_texCoordBounds.ult = fmin(ult, lrt);
@@ -947,6 +954,21 @@ void gDPTextureRectangle(f32 ulx, f32 uly, f32 lrx, f32 lry, s32 tile, s16 s, s1
 
 void gDPFullSync()
 {
+	enum
+	{
+		DPC_STATUS_XBUS_DMEM_DMA = 0x001,	// Bit  0: xbus_dmem_dma
+		DPC_STATUS_FREEZE = 0x002,			// Bit  1: Freeze
+		DPC_STATUS_FLUSH = 0x004,			// Bit  2: Flush
+		DPC_STATUS_START_GCLK = 0x008,		// Bit  3: Start GCLK
+		DPC_STATUS_TMEM_BUSY = 0x010,		// Bit  4: TMEM busy
+		DPC_STATUS_PIPE_BUSY = 0x020,		// Bit  5: Pipe busy
+		DPC_STATUS_CMD_BUSY = 0x040,		// Bit  6: CMD busy
+		DPC_STATUS_CBUF_READY = 0x080,		// Bit  7: CBUF ready
+		DPC_STATUS_DMA_BUSY = 0x100,		// Bit  8: DMA busy
+		DPC_STATUS_END_VALID = 0x200,		// Bit  9: End valid
+		DPC_STATUS_START_VALID = 0x400,		// Bit 10: Start valid
+	};
+
 	if (config.frameBufferEmulation.copyAuxToRDRAM != 0) {
 		frameBufferList().copyAux();
 		frameBufferList().removeAux();
@@ -973,7 +995,7 @@ void gDPFullSync()
 	}
 
 	*REG.MI_INTR |= MI_INTR_DP;
-
+	*REG.DPC_STATUS &= ~(DPC_STATUS_PIPE_BUSY | DPC_STATUS_CMD_BUSY | DPC_STATUS_START_GCLK);
 	CheckInterrupts();
 
 	DebugMsg( DEBUG_NORMAL, "gDPFullSync();\n" );

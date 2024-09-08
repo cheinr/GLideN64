@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>597</width>
-    <height>612</height>
+    <width>590</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,7 +76,24 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QLabel" name="fullScreenResolutionLabel">
+                <widget class="QRadioButton" name="borderlessRadioButton">
+                 <property name="text">
+                  <string>Borderless window</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="borderlessComboBox"/>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="fullScreenRadioButton">
+                 <property name="text">
+                  <string>Full screen resolution:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="fullscreenResolutionLabel">
                  <property name="text">
                   <string>Full screen resolution:</string>
                  </property>
@@ -151,7 +168,7 @@
             <item>
              <widget class="QFrame" name="aspectFrame">
               <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This setting adjusts the aspect ratio of the video output. All N64 games support &lt;span style=&quot; font-weight:600;&quot;&gt;4:3&lt;/span&gt;. Some games support &lt;span style=&quot; font-weight:600;&quot;&gt;16:9&lt;/span&gt; within game settings. Use &lt;span style=&quot; font-weight:600;&quot;&gt;Stretch&lt;/span&gt; to fill the screen without pillar or letterboxing.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Try to adjust game to fit&lt;/span&gt; tries to adjust the viewing space to fit without stretching. Many games work well adjusted, but some don't.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This setting adjusts the aspect ratio of the video output. All N64 games support &lt;span style=&quot; font-weight:600;&quot;&gt;4:3&lt;/span&gt;. Some games support &lt;span style=&quot; font-weight:600;&quot;&gt;16:9&lt;/span&gt; within game settings. Use &lt;span style=&quot; font-weight:600;&quot;&gt;Stretch&lt;/span&gt; to fill the screen without pillar or letterboxing.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Try to adjust 4:3 game to fit&lt;/span&gt; (also known as &quot;widescreen hack&quot;) tries to adjust the viewing space to fit a game designed for 4:3 without stretching. Many games work well adjusted, but some don't.&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Try to adjust 16:9 game to fit&lt;/span&gt; (also known as &quot;ultrawidescreen hack&quot;) tries to adjust the viewing space to fit a game designed for 16:9 without stretching. Many games work well adjusted, but some don't. For games offering native 16:9 options, this is generally preferable for ultrawide aspect ratios as it'll lead to fewer rendering issues.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_22">
                <property name="spacing">
@@ -195,7 +212,12 @@
                  </item>
                  <item>
                   <property name="text">
-                   <string extracomment="This option activates a widescreen hack. The language &quot;Try to&quot; implies it may it may not work and the language &quot;adjust game&quot; implies the emulation will be inaccurate.">Try to adjust game to fit</string>
+                   <string extracomment="This option activates a widescreen hack. The language &quot;Try to&quot; implies it may it may not work and the language &quot;adjust 4:3 game&quot; implies the emulation will be inaccurate.">Try to adjust 4:3 game to fit</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string extracomment="This option activates a widescreen hack. The language &quot;Try to&quot; implies it may it may not work and the language &quot;adjust 16:9 game&quot; implies the emulation will be inaccurate.">Try to adjust 16:9 game to fit</string>
                   </property>
                  </item>
                 </widget>
@@ -1004,12 +1026,6 @@
       </layout>
      </widget>
      <widget class="QWidget" name="emulationTab">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>380</height>
-       </size>
-      </property>
       <attribute name="title">
        <string>Emulation</string>
       </attribute>
@@ -1020,7 +1036,7 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_30">
          <property name="spacing">
-          <number>18</number>
+          <number>9</number>
          </property>
          <item>
           <widget class="QCheckBox" name="customSettingsCheckBox">
@@ -1139,7 +1155,7 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_56">
               <property name="spacing">
-               <number>3</number>
+               <number>4</number>
               </property>
               <item>
                <widget class="QRadioButton" name="factor0xRadioButton">
@@ -1354,6 +1370,9 @@
             <string>Dithering</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_6">
+            <property name="verticalSpacing">
+             <number>4</number>
+            </property>
             <item row="0" column="1">
              <widget class="QCheckBox" name="ditheringQuantizationCheckBox">
               <property name="toolTip">
@@ -1435,7 +1454,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_48">
             <property name="spacing">
-             <number>18</number>
+             <number>9</number>
             </property>
             <item>
              <layout class="QVBoxLayout" name="verticalLayout_31">
@@ -1525,7 +1544,7 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_5">
                  <property name="spacing">
-                  <number>3</number>
+                  <number>4</number>
                  </property>
                  <property name="leftMargin">
                   <number>0</number>
@@ -1611,7 +1630,7 @@
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_35">
                  <property name="spacing">
-                  <number>3</number>
+                  <number>4</number>
                  </property>
                  <property name="leftMargin">
                   <number>0</number>
@@ -2656,6 +2675,16 @@
                  </property>
                  <property name="text">
                   <string>Alternative CRC calculation (for old Rice Video packs)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="strongCRCCheckBox">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This option enables alternative, strong CRC method instead of RiceCRC for texture dump. If you find some textures not dumped, try checking this option.&lt;/p&gt;&lt;p&gt;[Recommended: &lt;span style=&quot; font-style:italic;&quot;&gt;Mostly unchecked, unless RiceCRC fails&lt;/span&gt;]&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>Strong CRC calculation (when RiceCRC fails)</string>
                  </property>
                 </widget>
                </item>
@@ -4079,10 +4108,74 @@ The font's full name can be found in Settings&gt;Personalization&gt;Fonts</strin
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fullScreenResolutionComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fullScreenRefreshRateLabel</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>fullScreenRefreshRateComboBox</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>fullScreenRadioButton</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>borderlessComboBox</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <buttongroups>
-  <buttongroup name="osdButtonGroup"/>
-  <buttongroup name="fixTexrectCoordsButtonGroup"/>
   <buttongroup name="factorButtonGroup"/>
+  <buttongroup name="fixTexrectCoordsButtonGroup"/>
+  <buttongroup name="osdButtonGroup"/>
  </buttongroups>
 </ui>

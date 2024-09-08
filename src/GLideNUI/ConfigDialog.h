@@ -9,6 +9,13 @@ namespace Ui {
 class ConfigDialog;
 }
 
+struct DisplayInfo
+{
+	QString m_displayName;
+	QString m_deviceName;
+	int     m_leftBound{ 0 };
+};
+
 class QAbstractButton;
 class ConfigDialog : public QDialog
 {
@@ -21,7 +28,7 @@ public:
 						unsigned int _maxAnisotropy = 16);
 	~ConfigDialog();
 
-	void setIniPath(const QString & _strIniPath);
+	void setIniPath(const QString & _strIniPath, const QString & _strSharedIniPath);
 	void setRomName(const char * _romName);
 	void setTitle();
 	bool isAccepted() const { return m_accepted; }
@@ -76,7 +83,7 @@ private slots:
 
 	void on_noTexFileStorageCheckBox_toggled(bool checked);
 
-	void on_profilesComboBox_currentIndexChanged(const QString &arg1);
+	void on_profilesComboBox_currentTextChanged(const QString &arg1);
 
 	void on_settingsDestProfileRadioButton_toggled(bool checked);
 
@@ -103,9 +110,11 @@ private:
 	bool m_fontsInited;
 	bool m_blockReInit;
 	QString m_strIniPath;
+	QString m_strSharedIniPath;
 	const char * m_romName;
 	unsigned int m_maxMSAA;
 	unsigned int m_maxAnisotropy;
+	std::vector<DisplayInfo> m_displayInfo;
 };
 
 #endif // CONFIGDIALOG_H

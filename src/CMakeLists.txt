@@ -5,10 +5,12 @@ option(PANDORA "Set to ON if targeting an OpenPandora" ${PANDORA})
 option(ODROID "Set to ON if targeting an Odroid" ${ODROID})
 option(MUPENPLUSAPI "Set to ON for Mupen64Plus plugin" ${MUPENPLUSAPI})
 option(MUPENPLUSAPI_GLIDENUI "Set to ON for GLideNUI for Mupen64Plus" ${MUPENPLUSAPI_GLIDENUI})
+option(GLIDENUI_QT6 "Set to ON to use Qt6 for GLideNUI" ${GLIDENUI_QT6})
 option(MESA "Set to ON to disable Raspberry Pi autodetection" ${MESA})
 option(VERO4K "Set to ON if targeting a Vero4k" ${VERO4K})
 option(ANDROID "Set to ON if targeting an Android device" ${ANDROID})
 option(GL_PROFILE "Set to ON to turn on GL profiling" ${GL_PROFILE})
+option(DEBUG_DUMP "Set to ON to enable debug dump" ${DEBUG_DUMP})
 
 option(EMSCRIPTEN "Compile with emscripten")
 option(M64P_STATIC_PLUGINS "Use static plugin api naming and avoid dynamic calls")
@@ -77,7 +79,6 @@ set(GLideN64_SOURCES
   gSP.cpp
   Log.cpp
   N64.cpp
-  NoiseTexture.cpp
   PaletteTexture.cpp
   Performance.cpp
   PostProcessor.cpp
@@ -139,8 +140,10 @@ set(GLideN64_SOURCES
   uCodes/F3DBETA.cpp
   uCodes/F3DDKR.cpp
   uCodes/F3DEX.cpp
+  uCodes/F3DEX095.cpp
   uCodes/F3DAM.cpp
   uCodes/F3DEX2.cpp
+  uCodes/F3DEX3.cpp
   uCodes/F3DEX2ACCLAIM.cpp
   uCodes/F3DEX2CBFD.cpp
   uCodes/F3DZEX2.cpp
@@ -182,10 +185,17 @@ if(MUPENPLUSAPI_GLIDENUI OR NOT MUPENPLUSAPI)
   set(CMAKE_AUTORCC ON)
   set(CMAKE_AUTOUIC ON)
 
-  find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
-  set(GLIDENUI_LIBRARIES
-      Qt5::Widgets Qt5::Core Qt5::Gui
-  )
+  if (GLIDENUI_QT6)
+    find_package(Qt6 COMPONENTS Core Widgets Gui REQUIRED)
+    set(GLIDENUI_LIBRARIES
+        Qt6::Widgets Qt6::Core Qt6::Gui
+    )
+  else(GLIDENUI_QT6)
+    find_package(Qt5 COMPONENTS Core Widgets Gui REQUIRED)
+    set(GLIDENUI_LIBRARIES
+        Qt5::Widgets Qt5::Core Qt5::Gui
+    )
+  endif(GLIDENUI_QT6)
   if (MUPENPLUSAPI)
     list(APPEND GLideNUI_SOURCES
       GLideNUI/fullscreenresolutions_mupen64plus.cpp
@@ -203,9 +213,10 @@ if( NOT CMAKE_BUILD_TYPE)
         set( CMAKE_BUILD_TYPE Release)
 endif( NOT CMAKE_BUILD_TYPE)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+if(CMAKE_BUILD_TYPE STREQUAL "Release" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel" OR
+   CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
         set(GLIDEN64_BUILD_TYPE Release)
-elseif(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+elseif(CMAKE_BUILD_TYPE STREQUAL "Debug")
         set(GLIDEN64_BUILD_TYPE Debug)
 endif()
 
@@ -215,6 +226,12 @@ if( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
 		-DGL_DEBUG
 	)
 endif( GLIDEN64_BUILD_TYPE STREQUAL "Debug")
+
+if (DEBUG_DUMP)
+  add_definitions(
+    -DDEBUG_DUMP
+  )
+endif(DEBUG_DUMP)
 
 #check if we're running on Raspberry Pi
 if(EXISTS "${CMAKE_FIND_ROOT_PATH}/opt/vc/include/bcm_host.h" AND NOT MESA)
@@ -540,7 +557,7 @@ if(NOT EMSCRIPTEN AND ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR "${CMAKE_CXX
     message("Found compiler version " ${G++_VERSION})
     message(SEND_ERROR "You need at least Clang 3.3 to compile GLideN64!")
   endif()
-  set(GCC_CPP11_COMPILE_FLAGS "-std=c++11")
+  set(GCC_CPP11_COMPILE_FLAGS "-std=c++11 -pthread")
   set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_CPP11_COMPILE_FLAGS}" )
   if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     set(GCC_STATIC_LINK_FLAGS "-static-libgcc")
