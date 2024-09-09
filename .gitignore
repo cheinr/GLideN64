@@ -13,6 +13,8 @@ src/Revision.h
 /projects/msvc/GLideN64.VC.VC.opendb
 /projects/msvc/GLideN64.VC.db
 /projects/msvc/GeneratedFiles
+/projects/cmake/inc
+/projects/cmake/*.a
 /projects/cmake/CMakeCache.txt
 /projects/cmake/CMakeFiles/
 /projects/cmake/GLideNHQ/
