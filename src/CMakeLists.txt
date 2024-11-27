@@ -425,8 +425,6 @@ endif(ANDROID)
 
 if(ANDROID)
   set( FREETYPE_INCLUDE_DIRS "${ANDROID_LIB_PATH}/freetype/include" )
-elseif(UNIX OR BCMHOST)
-  set( FREETYPE_INCLUDE_DIRS "/usr/include/freetype2/" )
 else(UNIX OR BCMHOST)
   set( ENV{FREETYPE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../freetype )
 endif(ANDROID)

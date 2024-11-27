@@ -53,6 +53,7 @@ ptr_VidExt_GL_SetAttribute       CoreVideo_GL_SetAttribute = nullptr;
 ptr_VidExt_GL_GetAttribute       CoreVideo_GL_GetAttribute = nullptr;
 ptr_VidExt_GL_SwapBuffers        CoreVideo_GL_SwapBuffers = nullptr;
 ptr_VidExt_GL_GetDefaultFramebuffer CoreVideo_GL_GetDefaultFramebuffer = nullptr;
+ptr_PluginGetVersion             CoreGetVersion = nullptr;
 
 #else
 
